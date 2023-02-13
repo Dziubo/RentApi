@@ -1,4 +1,4 @@
-package com.example.demo.user;
+package com.example.demo.assignment;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -7,19 +7,21 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
 @RestControllerAdvice
-public class CustomExceptionHandler   {
+public class CustomExceptionAssigmentHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex
-            ) {
+    ) {
 
         Map<String, Object> responseBody = new LinkedHashMap<>();
-        responseBody.put("timestamp", new Date());
+        responseBody.put("timestampa", new Date());
 
         List<String> errors = ex.getBindingResult().getFieldErrors()
                 .stream()
@@ -29,11 +31,5 @@ public class CustomExceptionHandler   {
         responseBody.put("errors", errors);
         return new ResponseEntity<>(responseBody , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(NoSuchElementException.class)
-    protected ResponseEntity<Object> handleNoSuchElement(NoSuchElementException ex){
-        Map<String , Object> responseBody = new HashMap<>();
-        responseBody.put("timestamp" , LocalDateTime.now());
-        responseBody.put("error" , "użytkownik o podanym id nie istnieje");
-        return new ResponseEntity<>(responseBody , HttpStatus.BAD_REQUEST);
-    }
+
 }

@@ -1,14 +1,17 @@
 package com.example.demo.assignment;
 
+import com.example.demo.assignment.dto.AssignmentCreateDto;
+import com.example.demo.assignment.dto.AssignmentDto;
+import com.example.demo.assignment.exceptions.AssignmentAlreadyEnds;
+import com.example.demo.assignment.exceptions.InvalidAssignmentException;
+import com.example.demo.assignment.mapper.AssignmentMapper;
 import com.example.demo.inventory.asset.AssetRepository;
 import com.example.demo.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class AssignmentService {
@@ -21,7 +24,7 @@ public class AssignmentService {
         this.userRepository = userRepository;
         this.assetRepository = assetRepository;
     }
-    public AssignmentDto createAssignment(@RequestBody AssignmentDto assignmentDto){
+    public AssignmentDto createAssignment(AssignmentCreateDto assignmentDto){
         assignmentRepository
                 .findByAsset_IdAndEndOfAssignmentIsNull(
                     assignmentDto.getAssetId()).ifPresent(x->

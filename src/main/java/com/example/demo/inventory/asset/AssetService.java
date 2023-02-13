@@ -2,11 +2,14 @@ package com.example.demo.inventory.asset;
 
 import com.example.demo.assignment.Assignment;
 import com.example.demo.inventory.asset.dto.AssetAssignmentDto;
+import com.example.demo.inventory.asset.dto.AssetCreateDto;
 import com.example.demo.inventory.asset.dto.AssetDto;
 import com.example.demo.inventory.asset.mapper.AssetAssignmentMapper;
+import com.example.demo.inventory.asset.mapper.AssetCreateMapper;
 import com.example.demo.inventory.asset.mapper.AssetMapper;
 import com.example.demo.inventory.category.CategoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,9 +32,9 @@ public class    AssetService {
         return assetRepository.findAssetsByNameContainingIgnoreCaseOrSerialNumberContainingIgnoreCase(text ,text)
                 .stream().map(AssetMapper::toDto).collect(Collectors.toList());
     }
-    public AssetDto saveAsset(AssetDto assetsDto){
-        Asset assets = AssetMapper.toEntity(assetsDto);
-        categoryRepository.findCategoryByName(assetsDto.getCategory()).ifPresent(assets::setCategory);
+    public AssetDto saveAsset(AssetCreateDto assetsDto){
+        Asset assets = AssetCreateMapper.toEntity(assetsDto);
+        categoryRepository.findCategoryByName(assetsDto.getCategoryName()).ifPresent(assets::setCategory);
         assetRepository.findAssetBySerialNumber(assetsDto.getSerialNumber())
                 .ifPresent(x->{throw new AssetDuplicateSerialNumberException();});
         Asset savedAsset = assetRepository.save(assets);
@@ -41,7 +44,7 @@ public class    AssetService {
         return assetRepository.findById(id).map(AssetMapper::toDto);
 
     }
-
+    @Transactional
     public AssetDto update(AssetDto assetDto) {
         if (assetRepository.findAssetBySerialNumberThatHaveOtherId
                 (assetDto.getSerialNumber(), assetDto.getId()).isPresent()){

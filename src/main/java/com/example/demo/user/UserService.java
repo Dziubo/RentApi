@@ -1,10 +1,13 @@
 package com.example.demo.user;
 
 import com.example.demo.user.dto.UserAssignmentDto;
+import com.example.demo.user.dto.UserCreateDto;
 import com.example.demo.user.dto.UserDto;
 import com.example.demo.user.mapper.UserAssignmentMapper;
+import com.example.demo.user.mapper.UserCreateMapper;
 import com.example.demo.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,9 +23,9 @@ public class UserService {
     public List<UserDto> findUsersByLastname(String lastName){
         return userRepository.findAllByLastNameContaining(lastName).stream().map(UserMapper::toDto).collect(Collectors.toList())    ;
     }
-    public UserDto createUser(UserDto userDto){
+    public UserDto createUser(UserCreateDto userDto){
         userRepository.findUserByPesel(userDto.getPesel()).ifPresent(x->{throw new UserPeselDuplicateException();});
-        User user = UserMapper.toEntity(userDto);
+        User user = UserCreateMapper.toEntity(userDto);
         User savedUser = userRepository.save(user);
         return UserMapper.toDto(savedUser);
     }
@@ -31,11 +34,12 @@ public class UserService {
     public Optional<UserDto> findUserById(Long id){
         return (userRepository.findUserById(id).map(UserMapper::toDto));
     }
-    public UserDto updateUser(UserDto userDto ){
-        userRepository.findUserByPeselWhereIdIsDifferent(userDto.getPesel() , userDto.getId())
+    @Transactional
+    public UserDto updateUser(UserCreateDto userDto , Long id ){
+        userRepository.findUserByPeselWhereIdIsDifferent(userDto.getPesel() , id)
                 .ifPresent(x->{throw new UserPeselDuplicateException();});
 
-        User savedUser = userRepository.save(UserMapper.toEntity(userDto));
+        User savedUser = userRepository.save(UserCreateMapper.toEntity(userDto));
         return UserMapper.toDto(savedUser);
     }
     public List<UserAssignmentDto> getUsersAssignments(Long id){

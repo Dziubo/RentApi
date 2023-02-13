@@ -1,4 +1,6 @@
-package com.example.demo.assignment;
+package com.example.demo.assignment.dto;
+
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 

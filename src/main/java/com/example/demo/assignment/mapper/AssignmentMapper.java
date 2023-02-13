@@ -1,4 +1,7 @@
-package com.example.demo.assignment;
+package com.example.demo.assignment.mapper;
+
+import com.example.demo.assignment.Assignment;
+import com.example.demo.assignment.dto.AssignmentDto;
 
 public class AssignmentMapper {
     public static AssignmentDto toDto(Assignment assignment){

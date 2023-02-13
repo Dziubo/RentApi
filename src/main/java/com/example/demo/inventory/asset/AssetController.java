@@ -1,6 +1,7 @@
 package com.example.demo.inventory.asset;
 
     import com.example.demo.inventory.asset.dto.AssetAssignmentDto;
+    import com.example.demo.inventory.asset.dto.AssetCreateDto;
     import com.example.demo.inventory.asset.dto.AssetDto;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
@@ -27,9 +28,7 @@ public class AssetController {
         return assetsService.getAllAssetsWithName(text);
     }
     @PostMapping
-    public ResponseEntity<AssetDto> saveAsset(@RequestBody AssetDto assetsDto ){
-        if(assetsDto.getId() != null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Zapisywany obiekt nie może mieć ustawionego id");
+    public ResponseEntity<AssetDto> saveAsset(@RequestBody AssetCreateDto assetsDto){
         AssetDto assetDto = assetsService.saveAsset(assetsDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/{id}").buildAndExpand(assetDto.getId()).toUri();
@@ -48,7 +47,7 @@ public class AssetController {
         return ResponseEntity.ok(assetDto1);
     }
     @GetMapping("/{assetId}/assignments")
-    public List<AssetAssignmentDto> getAssetAssigments(@PathVariable Long assetId){
+    public List<AssetAssignmentDto> getAssetAssignments(@PathVariable Long assetId){
         return assetsService.getAssetAssignments(assetId);
     }
 }

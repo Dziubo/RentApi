@@ -1,6 +1,7 @@
 package com.example.demo.user.dto;
 
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.pl.PESEL;
 
 public class UserDto
 {
@@ -13,14 +14,10 @@ public class UserDto
     public void setId(Long id) {
         this.id = id;
     }
-    @NotNull(message = "imie nie może byc puste")
 
     String firstName;
-    @NotNull(message = "nazwisko nie może byc puste")
 
     String lastName;
-    @NotNull(message = "pesel nie może byc pusty")
-
     String pesel;
 
     public String getFirstName() {

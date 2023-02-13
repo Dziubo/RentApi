@@ -1,6 +1,9 @@
 package com.example.demo.assignment;
 
-import org.springframework.cglib.core.Local;
+import com.example.demo.assignment.dto.AssignmentCreateDto;
+import com.example.demo.assignment.dto.AssignmentDto;
+import com.example.demo.assignment.exceptions.InvalidAssignmentException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +23,10 @@ public class AssignmentController {
     }
 
     @PostMapping
-    public ResponseEntity<AssignmentDto> saveAssigment(@RequestBody AssignmentDto assignmentDto) {
+    public ResponseEntity<AssignmentDto> saveAssigment(@RequestBody @Valid AssignmentCreateDto dto) {
         AssignmentDto savedAssignment;
-        try {
-            savedAssignment = assignmentService.createAssignment(assignmentDto);
-        } catch (InvalidAssignmentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+            savedAssignment = assignmentService.createAssignment(dto);
+
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{id}").buildAndExpand(savedAssignment.getId()).toUri();
@@ -36,6 +36,6 @@ public class AssignmentController {
     @PostMapping("/{id}/end")
     public ResponseEntity<LocalDateTime> finishAssignment(@PathVariable Long id) {
         LocalDateTime endDate = assignmentService.finishAssignment(id);
-        return ResponseEntity.accepted().body(endDate);
+        return ResponseEntity.ok(endDate);
     }
 }
